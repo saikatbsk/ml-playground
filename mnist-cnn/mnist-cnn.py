@@ -1,15 +1,14 @@
 from __future__ import print_function
-
 import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.gridspec as gridspec
-
 from keras import backend as K
 from keras.datasets import mnist
 from keras.utils import np_utils
 from keras.models import Sequential
 from keras.layers.core import Dense, Dropout, Activation, Flatten
 from keras.layers import Convolution2D, MaxPooling2D
+from pathlib import Path
 
 """ Starting with a random seed ensures the reproducibility of the tests. """
 np.random.seed(1337)
@@ -93,37 +92,46 @@ model.summary()
 
 model.compile(loss='categorical_crossentropy', optimizer='adadelta', metrics=['accuracy'])
 
-history = model.fit(X_train[0:50000], Y_train[0:50000],
-                    batch_size=batch_size,
-                    nb_epoch=no_epoch,
-                    verbose=1,
-                    validation_data=(X_train[50000:60000], Y_train[50000:60000]))
+weights_file = Path('mnist_cnn_weights.h5')
 
-""" Save trained weights for future use """
-model.save_weights('mnist_cnn_weights.h5')
+if weights_file.is_file():
+    """ Load pre-computed weights """
+    print('Loading weights...')
+    model.load_weights(weights_file.name)
+else:
+    """ Else train the model """
+    print('Training model...')
+    history = model.fit(X_train[0:50000], Y_train[0:50000],
+                        batch_size=batch_size,
+                        nb_epoch=no_epoch,
+                        verbose=1,
+                        validation_data=(X_train[50000:60000], Y_train[50000:60000]))
 
-fig = plt.figure()
-gs = gridspec.GridSpec(1, 2)
+    """ Save trained weights for future use """
+    model.save_weights(weights_file.name)
 
-""" Summarize history for accuracy """
-fig.add_subplot(gs[0])
-plt.plot(history.history['acc'])
-plt.plot(history.history['val_acc'])
-plt.title('model accuracy')
-plt.ylabel('accuracy')
-plt.xlabel('epoch')
-plt.legend(['train', 'validation'], loc='upper left')
+    fig = plt.figure()
+    gs = gridspec.GridSpec(1, 2)
 
-""" Summarize history for loss """
-fig.add_subplot(gs[1])
-plt.plot(history.history['loss'])
-plt.plot(history.history['val_loss'])
-plt.title('model loss')
-plt.ylabel('loss')
-plt.xlabel('epoch')
-plt.legend(['train', 'validation'], loc='upper left')
+    """ Summarize history for accuracy """
+    fig.add_subplot(gs[0])
+    plt.plot(history.history['acc'])
+    plt.plot(history.history['val_acc'])
+    plt.title('model accuracy')
+    plt.ylabel('accuracy')
+    plt.xlabel('epoch')
+    plt.legend(['train', 'validation'], loc='upper left')
 
-plt.show()
+    """ Summarize history for loss """
+    fig.add_subplot(gs[1])
+    plt.plot(history.history['loss'])
+    plt.plot(history.history['val_loss'])
+    plt.title('model loss')
+    plt.ylabel('loss')
+    plt.xlabel('epoch')
+    plt.legend(['train', 'validation'], loc='upper left')
+
+    plt.show()
 
 """ Evaluate the trained model """
 score = model.evaluate(X_test, Y_test, verbose=0)
