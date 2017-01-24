@@ -1,6 +1,6 @@
 CNN model trained to classify handwritten digits from the MNIST dataset.
 
-MNIST is a dataset of 60,000 28x28 grayscale images of the 10 digits, along with a test set of 10,000 images
+MNIST is a dataset of 60,000 28x28 grayscale images of the 10 digits, along with a test set of 10,000 images.
 
 Requirements:
 
