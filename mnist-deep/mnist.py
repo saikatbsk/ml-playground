@@ -42,7 +42,7 @@ for i in range(10):
     plt.imshow(sample_img, cmap='gray')
     plt.title(sample_label)
 
-plt.show()
+#plt.show()
 
 """
 The dataset needs to be reshaped as each 28x28 image needs to be represented

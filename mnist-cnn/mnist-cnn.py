@@ -1,8 +1,15 @@
 from __future__ import print_function
 
 import numpy as np
+import matplotlib.pyplot as plt
+import matplotlib.gridspec as gridspec
 
 from keras import backend as K
+from keras.datasets import mnist
+from keras.utils import np_utils
+from keras.models import Sequential
+from keras.layers.core import Dense, Dropout, Activation, Flatten
+from keras.layers import Convolution2D, MaxPooling2D
 
 """ Starting with a random seed ensures the reproducibility of the tests. """
 np.random.seed(1337)
@@ -11,7 +18,6 @@ np.random.seed(1337)
 no_classes = 10
 no_epoch = 20
 batch_size = 128
-
 no_filter = 32          # Number of convolutional filters to use
 pool_size = (2, 2)      # Size of poolig area
 kernel_size = (3, 3)    # Convolution kernel size
@@ -54,5 +60,73 @@ X_test = X_test.astype('float32')
 X_train /= 255
 X_test /= 255
 
+print('Input shape: ', X_train.shape)
 print(X_train.shape[0], 'train samples.')
 print(X_test.shape[0], 'test samples.')
+
+"""
+Convert class vectors to binary class matrices using the 1-hot encoding method.
+"""
+Y_train = np_utils.to_categorical(y_train, no_classes)
+Y_test = np_utils.to_categorical(y_test, no_classes)
+
+""" Create a sequential model. """
+model = Sequential()
+
+model.add(Convolution2D(no_filter, kernel_size[0], kernel_size[1],
+                        border_mode='valid', input_shape=input_shape))
+model.add(Activation('relu'))
+model.add(Convolution2D(no_filter, kernel_size[0], kernel_size[1]))
+model.add(Activation('relu'))
+model.add(MaxPooling2D(pool_size=pool_size))
+model.add(Dropout(0.25))
+
+model.add(Flatten())
+model.add(Dense(128))
+model.add(Activation('relu'))
+model.add(Dropout(0.25))
+model.add(Dense(no_classes))
+model.add(Activation('softmax'))
+
+""" Let's look at the summary of the model. """
+model.summary()
+
+model.compile(loss='categorical_crossentropy', optimizer='adadelta', metrics=['accuracy'])
+
+history = model.fit(X_train[0:50000], Y_train[0:50000],
+                    batch_size=batch_size,
+                    nb_epoch=no_epoch,
+                    verbose=1,
+                    validation_data=(X_train[50000:60000], Y_train[50000:60000]))
+
+""" Save trained weights for future use """
+model.save_weights('mnist_cnn_weights.h5')
+
+fig = plt.figure()
+gs = gridspec.GridSpec(1, 2)
+
+""" Summarize history for accuracy """
+fig.add_subplot(gs[0])
+plt.plot(history.history['acc'])
+plt.plot(history.history['val_acc'])
+plt.title('model accuracy')
+plt.ylabel('accuracy')
+plt.xlabel('epoch')
+plt.legend(['train', 'validation'], loc='upper left')
+
+""" Summarize history for loss """
+fig.add_subplot(gs[1])
+plt.plot(history.history['loss'])
+plt.plot(history.history['val_loss'])
+plt.title('model loss')
+plt.ylabel('loss')
+plt.xlabel('epoch')
+plt.legend(['train', 'validation'], loc='upper left')
+
+plt.show()
+
+""" Evaluate the trained model """
+score = model.evaluate(X_test, Y_test, verbose=0)
+
+print('Test score: ', score[0])
+print('Test accuracy: ', score[1])
