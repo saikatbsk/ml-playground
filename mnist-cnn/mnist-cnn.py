@@ -1,4 +1,6 @@
 from __future__ import print_function
+import sys
+from pathlib import Path
 import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.gridspec as gridspec
@@ -8,7 +10,12 @@ from keras.utils import np_utils
 from keras.models import Sequential
 from keras.layers.core import Dense, Dropout, Activation, Flatten
 from keras.layers import Convolution2D, MaxPooling2D
-from pathlib import Path
+
+""" Optional """
+try:
+    from keras.utils.visualize_util import plot
+except ImportError:
+    print('ImportError: Model visualization disabled!')
 
 """ Starting with a random seed ensures the reproducibility of the tests. """
 np.random.seed(1337)
@@ -89,6 +96,10 @@ model.add(Activation('softmax'))
 
 """ Let's look at the summary of the model. """
 model.summary()
+
+""" Save model visualization to file """
+if 'keras.utils.visualize_util' in sys.modules:
+    plot(model, to_file='figure_1.png', show_shapes=True)
 
 model.compile(loss='categorical_crossentropy', optimizer='adadelta', metrics=['accuracy'])
 
