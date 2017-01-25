@@ -17,6 +17,11 @@ try:
 except ImportError:
     print('ImportError: Model visualization disabled!')
 
+try:
+    from tsne import bh_sne
+except ImportError:
+    print('ImportError: Data visualization (t-SNE) disabled!')
+
 """ Starting with a random seed ensures the reproducibility of the tests. """
 np.random.seed(1337)
 
@@ -76,6 +81,28 @@ Convert class vectors to binary class matrices using the 1-hot encoding method.
 Y_train = np_utils.to_categorical(y_train, no_classes)
 Y_test = np_utils.to_categorical(y_test, no_classes)
 
+""" Data visualization using t-SNE """
+if 'bh_sne' in sys.modules:
+    print('Visualizing training data using t-SNE...')
+
+    x_data = X_train.astype('float64')
+    x_data = x_data.reshape((x_data.shape[0], -1))
+    x_data = x_data[:1000]
+    y_data = y_train[:1000]
+
+    """ Perform t-SNE embedding """
+    vis_data = bh_sne(x_data)
+
+    """ Plot the data """
+    vis_x = vis_data[:, 0]
+    vis_y = vis_data[:, 1]
+
+    plt.scatter(vis_x, vis_y, c=y_data, cmap=plt.cm.get_cmap('jet', 10))
+    plt.colorbar(ticks=range(10))
+    plt.clim(-0.5, 9.5)
+    plt.title('Training data visualization with t-SNE')
+    plt.show()
+
 """ Create a sequential model. """
 model = Sequential()
 
@@ -99,7 +126,7 @@ model.summary()
 
 """ Save model visualization to file """
 if 'keras.utils.visualize_util' in sys.modules:
-    plot(model, to_file='figure_1.png', show_shapes=True)
+    plot(model, to_file='fig/model.png', show_shapes=True)
 
 model.compile(loss='categorical_crossentropy', optimizer='adadelta', metrics=['accuracy'])
 

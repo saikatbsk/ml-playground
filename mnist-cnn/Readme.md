@@ -10,6 +10,7 @@ Requirements are,
 * Matplotlib
 * Graphviz (Optional)
 * Pydot (Optional)
+* t-SNE (Optional)
 * Keras
 * TensorFlow
 
@@ -17,12 +18,12 @@ The first 50,000 images, from the training dataset, are used for training. The l
 
 The model visualization is shown in Figure 1.
 
-|![figure_1](figure_1.png)|
+|![figure_1](fig/model.png)|
 |---|
 |Figure 1. Model visualization.|
 
 Accuracy and loss for each epoch is shown in Figure 2.
 
-|![figure_2](figure_2.png)|
+|![figure_2](fig/acc_loss.png)|
 |---|
 |Figure 2. Model accuracy and model loss for 20 epochs.|
