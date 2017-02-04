@@ -4,7 +4,7 @@ CNN model trained to classify handwritten digits from the MNIST dataset. MNIST i
 
 Requirements are,
 
-* Python 2.x (t-sne doesn't work with Python 3.x)
+* Python (2.x if you want t-SNE to be enabled)
 * Pathlib
 * Numpy
 * Matplotlib
@@ -14,7 +14,7 @@ Requirements are,
 * Keras
 * TensorFlow
 
-The first 50,000 images, from the training dataset, are used for training. The last 10,000 images are used for validation. Accuracy on testset after 20 epochs is **99.16 %**.
+Accuracy on testset after 20 epochs is **99.23 %**.
 
 The model visualization is shown in Figure 1.
 

@@ -97,11 +97,13 @@ if 'bh_sne' in sys.modules:
     vis_x = vis_data[:, 0]
     vis_y = vis_data[:, 1]
 
+    fig = plt.figure()
     plt.scatter(vis_x, vis_y, c=y_data, cmap=plt.cm.get_cmap('jet', 10))
     plt.colorbar(ticks=range(10))
     plt.clim(-0.5, 9.5)
     plt.title('Training data visualization with t-SNE')
     plt.show()
+    fig.savefig('fig/data.png')
 
 """ Create a sequential model. """
 model = Sequential()
@@ -170,6 +172,7 @@ else:
     plt.legend(['train', 'validation'], loc='upper left')
 
     plt.show()
+    fig.savefig('fig/acc_loss.png')
 
 """ Evaluate the trained model """
 score = model.evaluate(X_test, Y_test, verbose=0)
