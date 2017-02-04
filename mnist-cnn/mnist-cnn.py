@@ -139,11 +139,11 @@ if weights_file.is_file():
 else:
     """ Else train the model """
     print('Training model...')
-    history = model.fit(X_train[0:50000], Y_train[0:50000],
+    history = model.fit(X_train, Y_train,
                         batch_size=batch_size,
                         nb_epoch=no_epoch,
                         verbose=1,
-                        validation_data=(X_train[50000:60000], Y_train[50000:60000]))
+                        validation_data=(X_test, Y_test))
 
     """ Save trained weights for future use """
     model.save_weights(weights_file.name)
